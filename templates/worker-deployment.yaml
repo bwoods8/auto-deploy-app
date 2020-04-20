@@ -60,7 +60,7 @@ items:
               name: {{ $.Values.application.secretName }}
           {{- end }}
           env:
-{{- if .Values.postgresql.managed }}
+{{- if .Values.postgresql.enabled }}
           - name: DATABASE_URL
            value: {{ .Values.application.database_url | quote }}
 {{- end }}

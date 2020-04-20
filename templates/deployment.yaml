@@ -71,8 +71,10 @@ spec:
               name: app-postgres
               key: privateIP
 {{- end }}
+{{- if .Values.postgresql.enabled }}
         - name: DATABASE_URL
           value: {{ .Values.application.database_url | quote }}
+{{- end }}
         - name: GITLAB_ENVIRONMENT_NAME
           value: {{ .Values.gitlab.envName | quote }}
         - name: GITLAB_ENVIRONMENT_URL
