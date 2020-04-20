@@ -3,7 +3,7 @@ apiVersion: v1
 kind: List
 items:
 {{- range $workerName, $workerConfig :=  .Values.workers }}
-- apiVersion: {{ default "apps/v1" $.Values.deploymentApiVersion }}
+- apiVersion: {{ default "extensions/v1beta1" $.Values.deploymentApiVersion }}
   kind: Deployment
   metadata:
     name: {{ template "trackableappname" $ }}-{{ $workerName }}
@@ -17,7 +17,7 @@ items:
       release: {{ $.Release.Name }}
       heritage: {{ $.Release.Service }}
   spec:
-  {{- if or $.Values.enableSelector (eq (default "apps/v1" $.Values.deploymentApiVersion) "extensions/v1beta1") }}
+  {{- if or $.Values.enableSelector (eq (default "extensions/v1beta1" $.Values.deploymentApiVersion) "apps/v1") }}
     selector:
       matchLabels:
         track: "{{ $.Values.application.track }}"
@@ -60,8 +60,10 @@ items:
               name: {{ $.Values.application.secretName }}
           {{- end }}
           env:
+{{- if .Values.postgresql.managed }}
           - name: DATABASE_URL
-            value: {{ $.Values.application.database_url | quote }}
+           value: {{ .Values.application.database_url | quote }}
+{{- end }}
           - name: GITLAB_ENVIRONMENT_NAME
             value: {{ $.Values.gitlab.envName | quote }}
           livenessProbe:
